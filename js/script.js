@@ -1,5 +1,6 @@
 var urlApi = 'http://157.230.17.132:4009/sales';
-var ctx = $('.chart-sales');
+var ctxSales = $('.chart-sales-man');
+var ctxMonth = $('.chart-sales-month');
 
 // apiObject = [
 //   {
@@ -32,19 +33,33 @@ var ctx = $('.chart-sales');
     //labels: {'marco', 'Roberto', 'michele'},
     //data:  [10000, 1000, 50]
 // };
+// var risultatoFinaleDaOttenere = {
+    //labels: {'gennaio', 'febbraio', 'marzo'},
+    //data:  [10000, 1000, 50]
+// };
 // createDataChart (apiObject);
 
-//prendo i dati da Api e avvio creazione grafico
-initDataChart(urlApi);
+//prendo i dati da Api e avvio creazione grafico Torta
+initDataChartSalesPerMan(urlApi);
+initDataChartSalesPerMonth(urlApi);
 
-//Funzione che formatta i data per il grafico
-function createDataChart (json){
+//Funzione che formatta i data per il grafico venditori
+function createDataChartSalesPerMan (json){
 
   //array finale da ritornare
   var jsonNew = {
     labels: [],
+    colors: [],
     data: []
   };
+
+  //tutte le vendite
+  var sumTotal = 0;
+
+  for (var i = 0; i < json.length; i++) {
+    sumTotal =+ json[i].amount;
+  }
+
 
   for (var i = 0; i < json.length; i++) {
     var thisObj = json[i];
@@ -59,25 +74,34 @@ function createDataChart (json){
 
       //inserisco in data allo stesso index amount = 0
       jsonNew.data[indexOfThisSalesman] = 0;
+      jsonNew.colors[indexOfThisSalesman] = createColorRandom();
     }
 
     //sommmo l'amnount a quello precedente nello stesso index del venditore
     jsonNew.data[indexOfThisSalesman] += thisObj.amount;
   }
 
+  // creo la percentuale di vendita
+  var salesPerc = jsonNew.data.map(function(value) {
+    return (value/sumTotal);
+  });
+
+  //sostituisco i nuovi dati
+  jsonNew.data = salesPerc;
+
   return jsonNew;
 }
 
 //funzione che chiama api
-function initDataChart(urlApi){
+function initDataChartSalesPerMan(urlApi){
   $.ajax({
     url: urlApi,
     method: 'GET',
     success: function(data){
       //preparo i dati dati
-      var sales = createDataChart(data);
+      var sales = createDataChartSalesPerMan(data);
       //creo il grafico
-      createChart(sales);
+      createChartPie(sales);
     },
     error: function(err){
       console.log(err);
@@ -85,16 +109,90 @@ function initDataChart(urlApi){
   });
 }
 
-//funzione che crea grafico
-function createChart(obj){
-  var lineChart = new Chart(ctx, {
+//funzione che chiama api per vendite mensili
+function initDataChartSalesPerMonth(urlApi){
+  $.ajax({
+    url: urlApi,
+    method: 'GET',
+    success: function(data){
+      //preparo i dati dati
+      var salesPerMonthData = createDataChartSalesPerMonth(data);
+      console.log(salesPerMonthData);
+      //creo il grafico
+      createChartLine(salesPerMonthData);
+    },
+    error: function(err){
+      console.log(err);
+    }
+  });
+}
+
+//funzione che crea grafico pie
+function createChartPie(obj){
+  var lineChart = new Chart(ctxSales, {
+    type: 'pie',
+    // The data for our dataset
+    data: {
+      labels: obj.labels,
+      datasets: [{
+        backgroundColor: obj.colors,
+        borderColor: '#bc12bc',
+        data: obj.data,
+      }]
+    }
+  });
+
+}
+
+//funzione che genera colori casuali
+function createColorRandom(){
+  var randomColor = Math.floor(Math.random()*16777215).toString(16);
+  return '#' + randomColor;
+}
+
+
+//Funzione che formatta i data per il grafico vendite
+function createDataChartSalesPerMonth (json){
+
+  //array finale da ritornare
+  var jsonNew = {
+    labels: [],
+    data: []
+  };
+
+  for (var i = 0; i < json.length; i++) {
+    var thisObj = json[i];
+    var thisMonth = moment(thisObj.date, 'DD, MM, YYYY').format('MMMM');
+
+    //se jsonNew non contiene in label il nome del venditore
+    if(!jsonNew.labels.includes(thisMonth)){
+
+      //inserisco in labels il Mese
+      jsonNew.labels.push(thisMonth);
+      //mi salvo la posizione nell'array
+      var indexOfThisMonth = jsonNew.labels.indexOf(thisMonth);
+
+      //inserisco in data allo stesso index amount = 0
+      jsonNew.data[indexOfThisMonth] = 0;
+    }
+
+    //sommmo l'amnount a quello precedente nello stesso index del venditore
+    jsonNew.data[indexOfThisMonth] += thisObj.amount;
+  }
+
+  return jsonNew;
+}
+
+
+//funzione che crea grafico line
+function createChartLine(obj){
+  var lineChart = new Chart(ctxMonth, {
     type: 'line',
     // The data for our dataset
     data: {
       labels: obj.labels,
       datasets: [{
-        label: "Sales",
-        backgroundColor: '#ff00ff',
+        label: 'Vendite per mese',
         borderColor: '#bc12bc',
         data: obj.data,
       }]
