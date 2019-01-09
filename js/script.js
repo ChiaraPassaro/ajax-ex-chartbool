@@ -50,15 +50,10 @@ function createDataChartSalesPerMan (json){
   var jsonNew = {
     labels: [],
     colors: [],
-    data: []
+    data: [],
+    dataPerc: [],
+    totalSales : 0
   };
-
-  //tutte le vendite
-  var sumTotal = 0;
-
-  for (var i = 0; i < json.length; i++) {
-    sumTotal =+ json[i].amount;
-  }
 
 
   for (var i = 0; i < json.length; i++) {
@@ -77,17 +72,20 @@ function createDataChartSalesPerMan (json){
       jsonNew.colors[indexOfThisSalesman] = createColorRandom();
     }
 
-    //sommmo l'amnount a quello precedente nello stesso index del venditore
+    //sommmo l'amount a quello precedente nello stesso index del venditore
     jsonNew.data[indexOfThisSalesman] += thisObj.amount;
+
+    //sommo l'amount alla somma totale
+    jsonNew.totalSales =+ json[i].amount;
   }
 
   // creo la percentuale di vendita
   var salesPerc = jsonNew.data.map(function(value) {
-    return (value/sumTotal);
+    return (value/jsonNew.totalSales);
   });
 
-  //sostituisco i nuovi dati
-  jsonNew.data = salesPerc;
+  //inserisco i nuovi dati
+  jsonNew.dataPerc = salesPerc;
 
   return jsonNew;
 }
@@ -137,7 +135,7 @@ function createChartPie(obj){
       datasets: [{
         backgroundColor: obj.colors,
         borderColor: '#bc12bc',
-        data: obj.data,
+        data: obj.dataPerc,
       }]
     }
   });
