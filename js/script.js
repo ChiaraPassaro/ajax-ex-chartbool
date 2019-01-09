@@ -1,43 +1,43 @@
 var urlApi = 'http://157.230.17.132:4009/sales';
 var ctx = $('.chart-sales');
 
-apiObject = [
-  {
-      "id": 1,
-      "salesman": "Marco",
-      "amount": 9000,
-      "date": "12/02/2017"
-  },
-  {
-      "id": 2,
-      "salesman": "Marco",
-      "amount": 1000,
-      "date": "12/04/2017"
-  },
-  {
-      "id": 3,
-      "salesman": "roberto",
-      "amount": 1000,
-      "date": "12/04/2017"
-  },
-  {
-      "id": 5,
-      "salesman": "michele",
-      "amount": 2000,
-      "date": "12/04/2017"
-  }
-];
+// apiObject = [
+//   {
+//       "id": 1,
+//       "salesman": "Marco",
+//       "amount": 9000,
+//       "date": "12/02/2017"
+//   },
+//   {
+//       "id": 2,
+//       "salesman": "Marco",
+//       "amount": 1000,
+//       "date": "12/04/2017"
+//   },
+//   {
+//       "id": 3,
+//       "salesman": "roberto",
+//       "amount": 1000,
+//       "date": "12/04/2017"
+//   },
+//   {
+//       "id": 5,
+//       "salesman": "michele",
+//       "amount": 2000,
+//       "date": "12/04/2017"
+//   }
+// ];
 
 // var risultatoFinaleDaOttenere = {
     //labels: {'marco', 'Roberto', 'michele'},
     //data:  [10000, 1000, 50]
 // };
+// createDataChart (apiObject);
 
-createDataChart (apiObject);
-var sales = createDataChart(apiObject);
+//prendo i dati da Api e avvio creazione grafico
+initDataChart(urlApi);
 
-
-//creo i data per il grafico
+//Funzione che formatta i data per il grafico
 function createDataChart (json){
 
   //array finale da ritornare
@@ -68,16 +68,37 @@ function createDataChart (json){
   return jsonNew;
 }
 
-var lineChart = new Chart(ctx, {
+//funzione che chiama api
+function initDataChart(urlApi){
+  $.ajax({
+    url: urlApi,
+    method: 'GET',
+    success: function(data){
+      //preparo i dati dati
+      var sales = createDataChart(data);
+      //creo il grafico
+      createChart(sales);
+    },
+    error: function(err){
+      console.log(err);
+    }
+  });
+}
+
+//funzione che crea grafico
+function createChart(obj){
+  var lineChart = new Chart(ctx, {
     type: 'line',
     // The data for our dataset
     data: {
-        labels: sales.labels,
-        datasets: [{
-            label: "My First dataset",
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
-            data: sales.data,
-        }]
+      labels: obj.labels,
+      datasets: [{
+        label: "Sales",
+        backgroundColor: '#ff00ff',
+        borderColor: '#bc12bc',
+        data: obj.data,
+      }]
     }
-});
+  });
+
+}
