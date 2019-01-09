@@ -1,0 +1,95 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  width: 100vw;
+  height: 100vh;
+  padding: 10px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-size: 18px;
+}
+
+.insert{
+  margin: 10px 0;
+  padding: 10px;
+  text-align: center;
+  background: lightgrey;
+}
+
+.insert_input{
+  width: 70%;
+  height: 35px;
+  padding: 5px;
+  line-height: 35px;
+  border: none;
+}
+
+.insert_date{
+  height: 35px;
+  padding: 5px;
+  line-height: 35px;
+  border: none;
+}
+
+.insert_time{
+  height: 35px;
+  padding: 5px;
+  line-height: 35px;
+  border: none;
+}
+
+.insert_button{
+  width: 60px;
+  padding: 5px;
+  line-height: 25px;
+  border: none;
+
+}
+
+.alert {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  text-align: center;
+  color: red;
+}
+
+.wrapper-list{
+  width: 100%;
+}
+
+.list{
+  width: calc(100% / 5px);
+  list-style-position: inside;
+  margin: 5px;
+}
+.list__item{
+  margin: 10px 0;
+}
+.list__text{
+  width: 70%;
+  margin-right: 2%;
+  padding: 4px;
+  border: 0 transparent;
+  font-size: 16px;
+  line-height: 18px;
+}
+.list__item.active{
+  border: 1px solid red;
+}
+.list__item .delete{
+  cursor: pointer;
+  color: red;
+  font-size: 14px;
+  line-height: 18px;
+}
+.list__time,
+.list__date{
+  font-size: 16px;
+  line-height: 18px;
+  height: 18px;
+}
