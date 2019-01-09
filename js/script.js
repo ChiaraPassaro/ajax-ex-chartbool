@@ -2,46 +2,9 @@ var urlApi = 'http://157.230.17.132:4009/sales';
 var ctxSales = $('.chart-sales-man');
 var ctxMonth = $('.chart-sales-month');
 
-// apiObject = [
-//   {
-//       "id": 1,
-//       "salesman": "Marco",
-//       "amount": 9000,
-//       "date": "12/02/2017"
-//   },
-//   {
-//       "id": 2,
-//       "salesman": "Marco",
-//       "amount": 1000,
-//       "date": "12/04/2017"
-//   },
-//   {
-//       "id": 3,
-//       "salesman": "roberto",
-//       "amount": 1000,
-//       "date": "12/04/2017"
-//   },
-//   {
-//       "id": 5,
-//       "salesman": "michele",
-//       "amount": 2000,
-//       "date": "12/04/2017"
-//   }
-// ];
-
-// var risultatoFinaleDaOttenere = {
-    //labels: {'marco', 'Roberto', 'michele'},
-    //data:  [10000, 1000, 50]
-// };
-// var risultatoFinaleDaOttenere = {
-    //labels: {'gennaio', 'febbraio', 'marzo'},
-    //data:  [10000, 1000, 50]
-// };
-// createDataChart (apiObject);
-
 //prendo i dati da Api e avvio creazione grafico Torta
-initDataChartSalesPerMan(urlApi);
-initDataChartSalesPerMonth(urlApi);
+initDataChartSales(urlApi);
+//initDataChartSalesPerMonth(urlApi);
 
 //Funzione che formatta i data per il grafico venditori
 function createDataChartSalesPerMan (json){
@@ -91,29 +54,16 @@ function createDataChartSalesPerMan (json){
 }
 
 //funzione che chiama api
-function initDataChartSalesPerMan(urlApi){
+function initDataChartSales(urlApi){
   $.ajax({
     url: urlApi,
     method: 'GET',
     success: function(data){
-      //preparo i dati dati
+      //preparo i dati 
       var sales = createDataChartSalesPerMan(data);
       //creo il grafico
       createChartPie(sales);
-    },
-    error: function(err){
-      console.log(err);
-    }
-  });
-}
 
-//funzione che chiama api per vendite mensili
-function initDataChartSalesPerMonth(urlApi){
-  $.ajax({
-    url: urlApi,
-    method: 'GET',
-    success: function(data){
-      //preparo i dati dati
       var salesPerMonthData = createDataChartSalesPerMonth(data);
       console.log(salesPerMonthData);
       //creo il grafico
@@ -123,6 +73,41 @@ function initDataChartSalesPerMonth(urlApi){
       console.log(err);
     }
   });
+}
+
+// //funzione che chiama api per vendite mensili
+// function initDataChartSalesPerMonth(urlApi){
+//   $.ajax({
+//     url: urlApi,
+//     method: 'GET',
+//     success: function(data){
+//       //preparo i dati dati
+//       var salesPerMonthData = createDataChartSalesPerMonth(data);
+//       console.log(salesPerMonthData);
+//       //creo il grafico
+//       createChartLine(salesPerMonthData);
+//     },
+//     error: function(err){
+//       console.log(err);
+//     }
+//   });
+// }
+
+//funzione che crea grafico line
+function createChartLine(obj){
+  var lineChart = new Chart(ctxMonth, {
+    type: 'line',
+    // The data for our dataset
+    data: {
+      labels: obj.labels,
+      datasets: [{
+        label: 'Vendite per mese',
+        borderColor: '#bc12bc',
+        data: obj.data,
+      }]
+    }
+  });
+
 }
 
 //funzione che crea grafico pie
@@ -147,7 +132,6 @@ function createColorRandom(){
   var randomColor = Math.floor(Math.random()*16777215).toString(16);
   return '#' + randomColor;
 }
-
 
 //Funzione che formatta i data per il grafico vendite
 function createDataChartSalesPerMonth (json){
@@ -179,22 +163,4 @@ function createDataChartSalesPerMonth (json){
   }
 
   return jsonNew;
-}
-
-
-//funzione che crea grafico line
-function createChartLine(obj){
-  var lineChart = new Chart(ctxMonth, {
-    type: 'line',
-    // The data for our dataset
-    data: {
-      labels: obj.labels,
-      datasets: [{
-        label: 'Vendite per mese',
-        borderColor: '#bc12bc',
-        data: obj.data,
-      }]
-    }
-  });
-
 }
