@@ -1,11 +1,34 @@
 var urlApi = 'http://157.230.17.132:4009/sales';
-var ctxSales = $('.chart-sales-man');
-var ctxMonth = $('.chart-sales-month');
+var $ctxSales = $('.chart-sales-man');
+var $ctxMonth = $('.chart-sales-month');
+var $selectMan = $('#agente');
+var $selectMonth = $('#mese');
+var $selectDay = $('#giorno');
+var $selectYear = $('#anno');
+var $buttonInsertSale = $('#button-inserisci');
 
-//prendo i dati da Api e avvio creazione grafico Torta
-initDataChartSales(urlApi);
+$(document).ready(function(){
 
-//Funzione che formatta i data per il grafico venditori
+  //prendo i dati da Api e avvio creazione grafico Torta
+  initDataChartSales(urlApi);
+
+  $selectMonth.change(function(){
+    var selectedMonth = $(this).val();
+    var selectedYear = $selectYear.val();
+    var momentString = selectedYear + '-' + selectedMonth;
+    var daysInMonth = moment(momentString, 'YYYY-MMMM').daysInMonth();
+    var days = createArray(daysInMonth);
+    createOption($selectDay, days);
+  });
+
+  // $buttonInsertSale.click(function(){
+  //   var $salesMan = $selectMan.val();
+  //   var $salesMonth = $selectMonth.val();
+  // });
+
+});
+
+//Funzione che formatta i datca per il grafico venditori
 function createDataChartSalesPerMan (json){
 
   //array finale da ritornare
@@ -79,15 +102,22 @@ function initDataChartSales(urlApi){
     url: urlApi,
     method: 'GET',
     success: function(data){
+
       //preparo i dati vendite per agente
       var sales = createDataChartSalesPerMan(data);
       //creo il grafico
       createChartPie(sales);
 
+      //creo la select agenti
+      createOption($selectMan, sales.labels);
+
       //preparo i dati vendite per mese
       var salesPerMonthData = createDataChartSalesPerMonth(data);
       //creo il grafico
       createChartLine(salesPerMonthData);
+
+      //creo la select mesi
+      createOption($selectMonth, salesPerMonthData.labels);
     },
     error: function(err){
       console.log(err);
@@ -97,7 +127,7 @@ function initDataChartSales(urlApi){
 
 //funzione che crea grafico line
 function createChartLine(obj){
-  var lineChart = new Chart(ctxMonth, {
+  var lineChart = new Chart($ctxMonth, {
     type: 'line',
     options: {
       legend: {
@@ -130,7 +160,7 @@ function createChartLine(obj){
 
 //funzione che crea grafico pie
 function createChartPie(obj){
-  var lineChart = new Chart(ctxSales, {
+  var lineChart = new Chart($ctxSales, {
     type: 'pie',
     options: {
       legend: {
@@ -203,4 +233,20 @@ function createDataChartSalesPerMonth (json){
     jsonNew.data[indexOfThisMonth] += thisObj.amount;
   }
   return jsonNew;
+}
+
+
+function createOption(select, option){
+  select.html('');
+  for (var i = 0; i < option.length; i++) {
+    select.append('<option value="' + option[i] + '">' + option[i] + '</option>');
+  }
+}
+
+function createArray(number){
+  array = [];
+  for (var i = 0; i < number; i++) {
+    array.push(i + 1);
+  }
+  return array;
 }
