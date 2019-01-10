@@ -39,8 +39,6 @@ function createDataChartSalesPerMan (json){
       do {
         var otherColor = createColorRandom();
         jsonNew.colors[indexOfThisSalesman] = otherColor;
-        console.log(jsonNew.colors[indexOfThisSalesman]);
-
       } while (isColor);
 
     }
@@ -56,9 +54,18 @@ function createDataChartSalesPerMan (json){
 
   // creo la percentuale di vendita
   var salesPerc = jsonNew.data.map(function(value) {
-  
-    return ((value/jsonNew.totalSales * 100).toFixed(2));
+    return parseFloat((value/jsonNew.totalSales * 100).toFixed(2));
   });
+
+  // console.log(salesPerc);
+  // controllo che la somma sia 100%
+  // console.log(
+  //   salesPerc.reduce(
+  //     function(sum, value){
+  //      return sum += value;
+  //     }
+  //   )
+  // );
 
   //inserisco i nuovi dati
   jsonNew.dataPerc = salesPerc;
@@ -95,8 +102,9 @@ function createChartLine(obj){
     options: {
       legend: {
           display: true,
+          position : 'left',
           labels: {
-              fontSize: 20
+            fontSize: 18
           }
       },
       tooltips: {
@@ -127,8 +135,9 @@ function createChartPie(obj){
     options: {
       legend: {
           display: true,
+          position : 'left',
           labels: {
-              fontSize: 20
+            fontSize: 18
           }
       },
       tooltips: {
@@ -136,7 +145,6 @@ function createChartPie(obj){
             label:function(tooltipItem, data){
               var label = data.labels[tooltipItem.index];
               var amount = data.datasets[0].data[tooltipItem.index];
-
               return label + ' - ' + amount + ' %';
             }
         }
@@ -181,21 +189,18 @@ function createDataChartSalesPerMonth (json){
     ],
     data: []
   };
-
   for (var i = 0; i < json.length; i++) {
     var thisObj = json[i];
     var thisMonth = moment(thisObj.date, 'DD, MM, YYYY').format('MMMM');
+    var indexOfThisMonth = jsonNew.labels.indexOf(thisMonth);
 
-    //se jsonNew contiene il mese
-    if(jsonNew.labels.includes(thisMonth)){
-      var indexOfThisMonth = jsonNew.labels.indexOf(thisMonth);
-      //inserisco in data allo stesso index amount = 0
+    //se non esiste creo il data
+    if(!jsonNew.data[indexOfThisMonth]){
       jsonNew.data[indexOfThisMonth] = 0;
     }
 
     //sommmo l'amnount a quello precedente nello stesso index del venditore
     jsonNew.data[indexOfThisMonth] += thisObj.amount;
   }
-
   return jsonNew;
 }
