@@ -6,10 +6,9 @@ var $selectMonth = $('#mese');
 var $selectDay = $('#giorno');
 var $selectYear = $('#anno');
 var $inputAmount = $('#valore');
-var chartLine = false;
-var chartPie = false;
 
 var $buttonInsertSale = $('#button-inserisci');
+
 var MONTH = [
   'January',
   'February',
@@ -25,10 +24,14 @@ var MONTH = [
   'December'
 ];
 
+//setto variabile oggetti chart
+var chartLine = false;
+var chartPie = false;
+
 $(document).ready(function(){
 
   //prendo i dati da Api e avvio creazione grafico Torta
-  initDataChartSales(urlApi);
+  getDataApi(urlApi);
 
   //creo la select mesi
   createOption($selectMonth, MONTH);
@@ -61,19 +64,78 @@ $(document).ready(function(){
       'amount': $salesAmount
     };
 
-    createSale(dataSale);
+    //se esiste chartPie
+    if(chartPie){
+      // salvo i colori attuali della pieChart
+      var colors = chartPie['config']['data']['datasets'][0]['backgroundColor'];
+    }
+
+    //creo la vendita
+    createSale(dataSale, colors);
 
   });
 
 });
 
+
+//funzione che chiama api
+function getDataApi(urlApi, colors) {
+  var colors = colors || false;
+
+  $.ajax({
+    url: urlApi,
+    method: 'GET',
+    success: function(data) {
+      //preparo i dati vendite per agente
+      var sales = createDataChartSalesPerMan(data, colors);
+      //console.log(sales);
+      //creo la select agenti
+      createOption($selectMan, sales.data.labels);
+
+      //preparo i dati vendite per mese
+      var salesPerMonthData = createDataChartSalesPerMonth(data);
+
+      //creo il grafici
+      chartPie = createChart($ctxSales, chartPie, sales);
+      chartLine = createChart($ctxMonth, chartLine, salesPerMonthData);
+
+    },
+    error: function(err) {
+      console.log(err);
+    }
+  });
+}
+
+//funzione che crea grafico line
+function createChart(canvasElement, chartObject, obj){
+  if(!chartObject){
+    console.log('oggetto non esistente');
+    //creo il grafico
+    chartObject = new Chart(canvasElement, obj);
+  } else {
+    console.log('oggetto esistente');
+    chartObject['config']['data'] = obj['data'];
+    chartObject.update();
+  }
+  return chartObject;
+}
+
+
+//funzione che genera colori casuali
+function createColorRandom(){
+  var randomColor = Math.floor(Math.random()*16777215).toString(16);
+  return '#' + randomColor;
+}
+
 //Funzione che formatta i datca per il grafico venditori
-function createDataChartSalesPerMan (json){
+function createDataChartSalesPerMan (json, colors){
+  var colors = colors || [];
+  console.log(colors);
 
   //array finale da ritornare
   var jsonNew = {
     labels: [],
-    colors: [],
+    colors: colors,
     data: [],
     dataPerc: [],
     totalSales : 0
@@ -93,14 +155,19 @@ function createDataChartSalesPerMan (json){
       //inserisco in data allo stesso index amount = 0
       jsonNew.data[indexOfThisSalesman] = 0;
 
-      var newColor = createColorRandom();
-      var isColor = jsonNew.colors.includes(newColor);
+      console.log(jsonNew.colors[indexOfThisSalesman]);
 
-      //se il colore esiste ne genera uno nuovo
-      do {
-        var otherColor = createColorRandom();
-        jsonNew.colors[indexOfThisSalesman] = otherColor;
-      } while (isColor);
+      if (jsonNew.colors[indexOfThisSalesman] == undefined){
+        //console.log(colors[indexOfThisSalesman]);
+        var newColor = createColorRandom();
+        var isColor = jsonNew.colors.includes(newColor);
+
+        //se il colore esiste ne genera uno nuovo
+        do {
+          var otherColor = createColorRandom();
+          jsonNew.colors[indexOfThisSalesman] = otherColor;
+        } while (isColor);
+      }
     }
 
     //cerco l'index del venditore corrente
@@ -131,80 +198,7 @@ function createDataChartSalesPerMan (json){
   //inserisco i nuovi dati
   jsonNew.dataPerc = salesPerc;
 
-  return jsonNew;
-}
-
-//funzione che chiama api
-function initDataChartSales(urlApi) {
-  $.ajax({
-    url: urlApi,
-    method: 'GET',
-    success: function(data) {
-
-      //preparo i dati vendite per agente
-      var sales = createDataChartSalesPerMan(data);
-      createChartPie(sales);
-
-      //creo la select agenti
-      createOption($selectMan, sales.labels);
-
-      //preparo i dati vendite per mese
-      var salesPerMonthData = createDataChartSalesPerMonth(data);
-
-      //creo il grafico
-      createChartLine(salesPerMonthData);
-
-    },
-    error: function(err) {
-      console.log(err);
-    }
-  });
-}
-
-//funzione che crea grafico line
-function createChartLine(obj){
-  var thisData = {
-    type: 'line',
-    options: {
-      legend: {
-          display: true,
-          position : 'left',
-          labels: {
-            fontSize: 18
-          }
-      },
-      tooltips: {
-        callbacks: {
-            label:function(tooltipItem, data){
-              var amount = data.datasets[0].data[tooltipItem.index];
-              return amount + ' €';
-            }
-        }
-      }
-    },
-    // The data for our dataset
-    data: {
-      labels: obj.labels,
-      datasets: [{
-        label: 'Fatturato mensile',
-        borderColor: '#bc12bc',
-        data: obj.data,
-      }]
-    }
-  };
-
-  if(!chartLine){
-    //creo il grafico
-    chartLine = new Chart($ctxMonth, thisData);
-  } else {
-    chartLine['config']['data'] = thisData['data'];
-    chartLine.update();
-  }
-}
-
-//funzione che crea grafico pie
-function createChartPie(obj){
-  var thisData = {
+  var dataForChart = {
     type: 'pie',
     options: {
       legend: {
@@ -226,30 +220,16 @@ function createChartPie(obj){
     },
     // The data for our dataset
     data: {
-      labels: obj.labels,
+      labels: jsonNew.labels,
       datasets: [{
-        backgroundColor: obj.colors,
+        backgroundColor: jsonNew.colors,
         borderColor: '#bc12bc',
-        data: obj.dataPerc,
+        data: jsonNew.dataPerc,
       }]
     }
   };
-
-  if(!chartPie){
-    //creo il grafico
-    chartPie = new Chart($ctxSales, thisData);
-    //console.log(chartPie);
-  } else {
-    chartPie['config']['data'] = thisData['data'];
-    chartPie.update();
-  }
-
-}
-
-//funzione che genera colori casuali
-function createColorRandom(){
-  var randomColor = Math.floor(Math.random()*16777215).toString(16);
-  return '#' + randomColor;
+  console.log(jsonNew);
+  return dataForChart;
 }
 
 //Funzione che formatta i data per il grafico vendite
@@ -285,7 +265,39 @@ function createDataChartSalesPerMonth (json){
     //sommmo l'amnount a quello precedente nello stesso index del venditore
     jsonNew.data[indexOfThisMonth] += parseFloat(thisObj.amount);
   }
-  return jsonNew;
+
+
+  var dataForChart = {
+    type: 'line',
+    options: {
+      legend: {
+          display: true,
+          position : 'left',
+          labels: {
+            fontSize: 18
+          }
+      },
+      tooltips: {
+        callbacks: {
+            label:function(tooltipItem, data){
+              var amount = data.datasets[0].data[tooltipItem.index];
+              return amount + ' €';
+            }
+        }
+      }
+    },
+    // The data for our dataset
+    data: {
+      labels: jsonNew.labels,
+      datasets: [{
+        label: 'Fatturato mensile',
+        borderColor: '#bc12bc',
+        data: jsonNew.data,
+      }]
+    }
+  };
+
+  return dataForChart;
 }
 
 
@@ -304,14 +316,16 @@ function createArray(number){
   return array;
 }
 
-function createSale(obj){
+function createSale(obj, colors){
+  var colors = colors || false;
+
   //console.log(obj);
   $.ajax({
     url: urlApi,
     method: 'POST',
     data: obj,
     success: function(data){
-      initDataChartSales(urlApi);
+      getDataApi(urlApi, colors);
     },
     error: function(err){
       console.log(err);
