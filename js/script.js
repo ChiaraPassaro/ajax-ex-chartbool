@@ -162,10 +162,22 @@ function createColorRandom(){
 
 //Funzione che formatta i data per il grafico vendite
 function createDataChartSalesPerMonth (json){
-
   //array finale da ritornare
   var jsonNew = {
-    labels: [],
+    labels: [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ],
     data: []
   };
 
@@ -173,14 +185,9 @@ function createDataChartSalesPerMonth (json){
     var thisObj = json[i];
     var thisMonth = moment(thisObj.date, 'DD, MM, YYYY').format('MMMM');
 
-    //se jsonNew non contiene in label il nome del venditore
-    if(!jsonNew.labels.includes(thisMonth)){
-
-      //inserisco in labels il Mese
-      jsonNew.labels.push(thisMonth);
-      //mi salvo la posizione nell'array
+    //se jsonNew contiene il mese
+    if(jsonNew.labels.includes(thisMonth)){
       var indexOfThisMonth = jsonNew.labels.indexOf(thisMonth);
-
       //inserisco in data allo stesso index amount = 0
       jsonNew.data[indexOfThisMonth] = 0;
     }
