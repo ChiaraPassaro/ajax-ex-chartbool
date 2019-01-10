@@ -50,13 +50,14 @@ function createDataChartSalesPerMan (json){
     jsonNew.data[indexOfThisSalesman] += thisObj.amount;
 
     //sommo l'amount alla somma totale
-    jsonNew.totalSales =+ json[i].amount;
+    jsonNew.totalSales += thisObj.amount;
     //console.log(jsonNew);
   }
 
   // creo la percentuale di vendita
   var salesPerc = jsonNew.data.map(function(value) {
-    return (value/jsonNew.totalSales);
+  
+    return ((value/jsonNew.totalSales * 100).toFixed(2));
   });
 
   //inserisco i nuovi dati
