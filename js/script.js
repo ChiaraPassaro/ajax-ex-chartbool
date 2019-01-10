@@ -31,8 +31,19 @@ function createDataChartSalesPerMan (json){
 
       //inserisco in data allo stesso index amount = 0
       jsonNew.data[indexOfThisSalesman] = 0;
-      jsonNew.colors[indexOfThisSalesman] = createColorRandom();
+
+      var newColor = createColorRandom();
+      jsonNew.colors[indexOfThisSalesman] = newColor;
+
+      //se il colore esiste ne genera uno nuovo
+      while (!jsonNew.colors.includes(newColor)){
+        var otherColor = createColorRandom();
+        jsonNew.colors[indexOfThisSalesman] = otherColor;
+        console.log(jsonNew.colors[indexOfThisSalesman]);
+      }
+
     }
+
 
     //sommmo l'amount a quello precedente nello stesso index del venditore
     jsonNew.data[indexOfThisSalesman] += thisObj.amount;
