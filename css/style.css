@@ -11,85 +11,27 @@ body{
   overflow-x: hidden;
   overflow-y: auto;
   font-size: 18px;
+  font-family: 'Exo 2', sans-serif;
 }
-
-.insert{
-  margin: 10px 0;
-  padding: 10px;
+.wrapper{
+  padding: 20px;
+}
+.page__title{
   text-align: center;
-  background: lightgrey;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.fatturato__mensile,
+.fatturato__peragente{
+  float: left;
+  width: calc(50% - 10px);
+  margin: 0 5px;
+  padding: 20px;
+  border: 1px solid grey;
+  border-radius: 5px;
+  background: #f1f1f1;
 }
 
-.insert_input{
-  width: 70%;
-  height: 35px;
-  padding: 5px;
-  line-height: 35px;
-  border: none;
-}
-
-.insert_date{
-  height: 35px;
-  padding: 5px;
-  line-height: 35px;
-  border: none;
-}
-
-.insert_time{
-  height: 35px;
-  padding: 5px;
-  line-height: 35px;
-  border: none;
-}
-
-.insert_button{
-  width: 60px;
-  padding: 5px;
-  line-height: 25px;
-  border: none;
-
-}
-
-.alert {
-  width: 100%;
-  margin: 10px 0;
-  padding: 10px;
-  text-align: center;
-  color: red;
-}
-
-.wrapper-list{
-  width: 100%;
-}
-
-.list{
-  width: calc(100% / 5px);
-  list-style-position: inside;
-  margin: 5px;
-}
-.list__item{
-  margin: 10px 0;
-}
-.list__text{
-  width: 70%;
-  margin-right: 2%;
-  padding: 4px;
-  border: 0 transparent;
-  font-size: 16px;
-  line-height: 18px;
-}
-.list__item.active{
-  border: 1px solid red;
-}
-.list__item .delete{
-  cursor: pointer;
-  color: red;
-  font-size: 14px;
-  line-height: 18px;
-}
-.list__time,
-.list__date{
-  font-size: 16px;
-  line-height: 18px;
-  height: 18px;
+.fatturato__title{
+  text-transform: uppercase;
 }

@@ -4,7 +4,6 @@ var ctxMonth = $('.chart-sales-month');
 
 //prendo i dati da Api e avvio creazione grafico Torta
 initDataChartSales(urlApi);
-//initDataChartSalesPerMonth(urlApi);
 
 //Funzione che formatta i data per il grafico venditori
 function createDataChartSalesPerMan (json){
@@ -40,6 +39,7 @@ function createDataChartSalesPerMan (json){
 
     //sommo l'amount alla somma totale
     jsonNew.totalSales =+ json[i].amount;
+    console.log(jsonNew);
   }
 
   // creo la percentuale di vendita
@@ -59,13 +59,13 @@ function initDataChartSales(urlApi){
     url: urlApi,
     method: 'GET',
     success: function(data){
-      //preparo i dati 
+      //preparo i dati vendite per agente
       var sales = createDataChartSalesPerMan(data);
       //creo il grafico
       createChartPie(sales);
 
+      //preparo i dati vendite per mese
       var salesPerMonthData = createDataChartSalesPerMonth(data);
-      console.log(salesPerMonthData);
       //creo il grafico
       createChartLine(salesPerMonthData);
     },
@@ -75,45 +75,60 @@ function initDataChartSales(urlApi){
   });
 }
 
-// //funzione che chiama api per vendite mensili
-// function initDataChartSalesPerMonth(urlApi){
-//   $.ajax({
-//     url: urlApi,
-//     method: 'GET',
-//     success: function(data){
-//       //preparo i dati dati
-//       var salesPerMonthData = createDataChartSalesPerMonth(data);
-//       console.log(salesPerMonthData);
-//       //creo il grafico
-//       createChartLine(salesPerMonthData);
-//     },
-//     error: function(err){
-//       console.log(err);
-//     }
-//   });
-// }
-
 //funzione che crea grafico line
 function createChartLine(obj){
   var lineChart = new Chart(ctxMonth, {
     type: 'line',
+    options: {
+      legend: {
+          display: true,
+          labels: {
+              fontSize: 20
+          }
+      },
+      tooltips: {
+        callbacks: {
+            label:function(tooltipItem, data){
+              var amount = data.datasets[0].data[tooltipItem.index];
+              return amount + ' €';
+            }
+        }
+      }
+    },
     // The data for our dataset
     data: {
       labels: obj.labels,
       datasets: [{
-        label: 'Vendite per mese',
+        label: 'Fatturato mensile',
         borderColor: '#bc12bc',
         data: obj.data,
       }]
     }
   });
-
 }
 
 //funzione che crea grafico pie
 function createChartPie(obj){
   var lineChart = new Chart(ctxSales, {
     type: 'pie',
+    options: {
+      legend: {
+          display: true,
+          labels: {
+              fontSize: 20
+          }
+      },
+      tooltips: {
+        callbacks: {
+            label:function(tooltipItem, data){
+              var label = data.labels[tooltipItem.index];
+              var amount = data.datasets[0].data[tooltipItem.index];
+
+              return label + ' - ' + amount + ' %';
+            }
+        }
+      }
+    },
     // The data for our dataset
     data: {
       labels: obj.labels,
