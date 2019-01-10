@@ -6,11 +6,32 @@ var $selectMonth = $('#mese');
 var $selectDay = $('#giorno');
 var $selectYear = $('#anno');
 var $buttonInsertSale = $('#button-inserisci');
+var MONTH = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
 
 $(document).ready(function(){
 
   //prendo i dati da Api e avvio creazione grafico Torta
   initDataChartSales(urlApi);
+
+  //creo la select mesi
+  createOption($selectMonth, MONTH);
+
+  //popolo la select dei giorni
+  var days = createArray(31);
+  createOption($selectDay, days);
 
   $selectMonth.change(function(){
     var selectedMonth = $(this).val();
@@ -116,8 +137,7 @@ function initDataChartSales(urlApi){
       //creo il grafico
       createChartLine(salesPerMonthData);
 
-      //creo la select mesi
-      createOption($selectMonth, salesPerMonthData.labels);
+
     },
     error: function(err){
       console.log(err);
@@ -249,4 +269,8 @@ function createArray(number){
     array.push(i + 1);
   }
   return array;
+}
+
+function createSale(array){
+  console.log(array);
 }
