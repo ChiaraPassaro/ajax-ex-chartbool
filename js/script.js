@@ -33,14 +33,15 @@ function createDataChartSalesPerMan (json){
       jsonNew.data[indexOfThisSalesman] = 0;
 
       var newColor = createColorRandom();
-      jsonNew.colors[indexOfThisSalesman] = newColor;
+      var isColor = jsonNew.colors.includes(newColor);
 
       //se il colore esiste ne genera uno nuovo
-      while (!jsonNew.colors.includes(newColor)){
+      do {
         var otherColor = createColorRandom();
         jsonNew.colors[indexOfThisSalesman] = otherColor;
         console.log(jsonNew.colors[indexOfThisSalesman]);
-      }
+
+      } while (isColor);
 
     }
 
@@ -50,7 +51,7 @@ function createDataChartSalesPerMan (json){
 
     //sommo l'amount alla somma totale
     jsonNew.totalSales =+ json[i].amount;
-    console.log(jsonNew);
+    //console.log(jsonNew);
   }
 
   // creo la percentuale di vendita
