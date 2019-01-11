@@ -15,23 +15,52 @@ body{
 }
 .wrapper{
   padding: 20px;
+  text-align: center;
 }
 .page__title{
   text-align: center;
   text-transform: uppercase;
   margin-bottom: 20px;
 }
-.fatturato__mensile,
-.fatturato__peragente{
+.chart__mensile,
+.chart__peragente,
+.chart__perquarter{
   float: left;
   width: calc(50% - 10px);
-  margin: 0 5px;
+  margin: 10px 5px;
   padding: 20px;
   border: 1px solid grey;
   border-radius: 5px;
   background: #f1f1f1;
 }
 
-.fatturato__title{
+.chart__title{
   text-transform: uppercase;
+}
+
+.inserisci-vendita{
+  width: calc(100% - 10px);
+  margin: 0 auto;
+  padding: 15px;
+  background: #d1d1d1;
+  border: 1px solid grey;
+  border-radius: 5px;
+}
+
+
+.inserisci-vendita__title{
+  margin-bottom: 10px;
+}
+
+.inserisci-vendita__button{
+  padding: 0 5px;
+  line-height: 20px;
+}
+
+.inserisci-vendita__giorno,
+.inserisci-vendita__mese,
+.inserisci-vendita__anno,
+.inserisci-vendita__valore{
+  line-height: 20px;
+  height: 20px;
 }

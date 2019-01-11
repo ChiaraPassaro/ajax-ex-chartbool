@@ -1,6 +1,7 @@
 var urlApi = 'http://157.230.17.132:4009/sales';
 var $ctxSales = $('.chart-sales-man');
 var $ctxMonth = $('.chart-sales-month');
+var $ctxQuarter = $('.chart-sales-quarter');
 var $selectMan = $('#agente');
 var $selectMonth = $('#mese');
 var $selectDay = $('#giorno');
@@ -27,6 +28,7 @@ var MONTH = [
 //setto variabile oggetti chart
 var chartLine = false;
 var chartPie = false;
+var chartBar = false;
 
 $(document).ready(function(){
 
@@ -94,10 +96,12 @@ function getDataApi(urlApi, colors) {
 
       //preparo i dati vendite per mese
       var salesPerMonthData = createDataChartSalesPerMonth(data);
+      var salesPerQuarter = createDataChartSalesPerQuarter(data);
 
       //creo il grafici
       chartPie = createChart($ctxSales, chartPie, sales);
       chartLine = createChart($ctxMonth, chartLine, salesPerMonthData);
+      chartBar = createChart($ctxQuarter, chartBar, salesPerQuarter);
 
     },
     error: function(err) {
@@ -202,19 +206,19 @@ function createDataChartSalesPerMan (json, colors){
     type: 'pie',
     options: {
       legend: {
-          display: true,
-          position : 'left',
-          labels: {
-            fontSize: 18
-          }
+        display: true,
+        position : 'left',
+        labels: {
+          fontSize: 18
+        }
       },
       tooltips: {
         callbacks: {
-            label:function(tooltipItem, data){
-              var label = data.labels[tooltipItem.index];
-              var amount = data.datasets[0].data[tooltipItem.index];
-              return label + ' - ' + amount + ' %';
-            }
+          label:function(tooltipItem, data){
+            var label = data.labels[tooltipItem.index];
+            var amount = data.datasets[0].data[tooltipItem.index];
+            return label + ' - ' + amount + ' %';
+          }
         }
       }
     },
@@ -271,18 +275,18 @@ function createDataChartSalesPerMonth (json){
     type: 'line',
     options: {
       legend: {
-          display: true,
-          position : 'left',
-          labels: {
-            fontSize: 18
-          }
+        display: true,
+        position : 'left',
+        labels: {
+          fontSize: 18
+        }
       },
       tooltips: {
         callbacks: {
-            label:function(tooltipItem, data){
-              var amount = data.datasets[0].data[tooltipItem.index];
-              return amount + ' €';
-            }
+          label:function(tooltipItem, data){
+            var amount = data.datasets[0].data[tooltipItem.index];
+            return amount + ' €';
+          }
         }
       }
     },
@@ -291,6 +295,101 @@ function createDataChartSalesPerMonth (json){
       labels: jsonNew.labels,
       datasets: [{
         label: 'Fatturato mensile',
+        borderColor: '#bc12bc',
+        data: jsonNew.data,
+      }]
+    }
+  };
+
+  return dataForChart;
+}
+
+//Funzione che formatta i data per il grafico vendite per quarter
+function createDataChartSalesPerQuarter (json){
+  //array finale da ritornare
+  var jsonNew = {
+    'labels': [
+      'Q1',
+      'Q2',
+      'Q3',
+      'Q4',
+    ],
+    'month': [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ],
+    'colors': ['red', 'coral', 'blue', 'lightblue'],
+    'data': [0, 0, 0, 0],
+    'total_sales': 0
+  };
+  for (var i = 0; i < json.length; i++) {
+    var thisObj = json[i];
+    var thisMonth = moment(thisObj.date, 'DD, MM, YYYY').format('MMMM');
+    var indexOfThisMonth = jsonNew.month.indexOf(thisMonth);
+
+    if(indexOfThisMonth === 0 || indexOfThisMonth === 1 || indexOfThisMonth === 2){
+      var indexOfThisQuarter = 0;
+    }
+    else if(indexOfThisMonth === 3 || indexOfThisMonth === 4 || indexOfThisMonth === 5){
+      var indexOfThisQuarter = 1;
+    }
+    else if(indexOfThisMonth === 6 || indexOfThisMonth === 7 || indexOfThisMonth === 8){
+      var indexOfThisQuarter = 2;
+    }
+    else if(indexOfThisMonth === 9 || indexOfThisMonth === 10 || indexOfThisMonth === 11){
+      var indexOfThisQuarter = 3;
+    }
+
+    //numero totale di vendite
+    jsonNew.total_sales += 1;
+
+    //se vendita presente aggiungo 1
+    jsonNew.data[indexOfThisQuarter] += 1;
+  }
+
+  console.log(jsonNew);
+  var dataForChart = {
+    type: 'horizontalBar',
+    options: {
+      legend: {
+        display: true,
+        position : 'top',
+        labels: {
+          fontSize: 18
+        }
+      },
+      tooltips: {
+        callbacks: {
+          label:function(tooltipItem, data){
+            var amount = data.datasets[0].data[tooltipItem.index];
+            return amount + ' vendite';
+          }
+        }
+      },
+      scales: {
+        xAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    },
+    // The data for our dataset
+    data: {
+      labels: jsonNew.labels,
+      datasets: [{
+        backgroundColor: jsonNew.colors,
+        label: 'Vendite per Quarter',
         borderColor: '#bc12bc',
         data: jsonNew.data,
       }]
