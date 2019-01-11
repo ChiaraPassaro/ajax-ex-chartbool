@@ -407,13 +407,12 @@
       //creo il grafico e lo conservo in una variabile globale
       //[chartObject] e' il nome della variabile
       chartObject = new Chart(canvasElement, obj);
-      console.log(tables[nameChart]);
       createTable(tables[nameChart], tmpOptionTable, obj);
     } else {
       //aggiorno il grafico
       chartObject.config.data = obj.data;
       chartObject.update();
-      createTable(tables[chartObject], tmpOptionTable, obj);
+      createTable(tables[nameChart], tmpOptionTable, obj);
     }
     //ritorno l'oggetto
     return chartObject;

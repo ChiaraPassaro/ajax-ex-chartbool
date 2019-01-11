@@ -23,7 +23,7 @@ function createTable(table, sourceTemplate, obj){
   var labels = obj.data.labels;
   var data = obj.data.datasets[0].data;
   var title = obj.data.datasets[0].label || false;
-  console.log(obj);
+
   var oContext = {
     'title': title,
     'labels': [],
@@ -38,7 +38,6 @@ function createTable(table, sourceTemplate, obj){
   for (var i = 0; i < data.length; i++) {
     oContext.rows.push({'value': data[i]});
   }
-  console.log(oContext);
   table.html('');
   var template = Handlebars.compile(sourceTemplate);
   var html = template(oContext);
