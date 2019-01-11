@@ -1,12 +1,52 @@
 //Funzioni Utilita'
 
-//Funzione che crea una option
-function createOption(select, option){
-  select.html('');
-  for (var i = 0; i < option.length; i++) {
-    select.append('<option value="' + option[i] + '">' + option[i] + '</option>');
+//Funzione che crea una option da template handlebars
+function createOption(select, sourceTemplate, values){
+
+  var oContext = {
+    'values': []
+  };
+
+  for (var i = 0; i < values.length; i++) {
+    oContext.values.push({'value': values[i]});
   }
+
+  select.html('');
+  var template = Handlebars.compile(sourceTemplate);
+  var html = template(oContext);
+  select.html(html);
+
 }
+
+//Funzione che crea una tabella da template handlebars
+function createTable(table, sourceTemplate, obj){
+  var labels = obj.data.labels;
+  var data = obj.data.datasets[0].data;
+  var title = obj.data.datasets[0].label || false;
+  console.log(obj);
+  var oContext = {
+    'title': title,
+    'labels': [],
+    'rows':[],
+
+  };
+
+  for (var i = 0; i < labels.length; i++) {
+    oContext.labels.push({'label': labels[i]});
+  }
+
+  for (var i = 0; i < data.length; i++) {
+    oContext.rows.push({'value': data[i]});
+  }
+  console.log(oContext);
+  table.html('');
+  var template = Handlebars.compile(sourceTemplate);
+  var html = template(oContext);
+  table.html(html);
+
+}
+
+
 
 //Funzione che crea un array di numeri passando il numero massimo a cui arrivare
 function createArray(number){

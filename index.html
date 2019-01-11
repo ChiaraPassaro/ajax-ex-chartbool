@@ -6,6 +6,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://momentjs.com/downloads/moment-with-locales.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js" charset="utf-8"></script>
     <link href="https://fonts.googleapis.com/css?family=Exo+2" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
@@ -30,16 +31,41 @@
       <div class="chart__mensile">
         <h2 class="chart__title">Fatturato Mensile</h2>
         <canvas class="chart-sales-month"></canvas>
+        <div class="table-for-chart table-sales-month"></div>
       </div>
       <div class="chart__peragente">
         <h2 class="chart__title">Vendite per Agente</h2>
         <canvas class="chart-sales-man"></canvas>
+        <div class="table-for-chart table-sales-man"></div>
       </div>
       <div class="chart__perquarter">
         <h2 class="chart__title">Vendite per Quarter</h2>
         <canvas class="chart-sales-quarter"></canvas>
+        <div class="table-for-chart table-sales-quarter"></div>
       </div>
     </div>
+    <script id="template--option" type="text/x-handlebars-template">
+        {{#each values}}
+          <option value="{{value}}">{{value}}</option>
+        {{/each}}
+    </script>
+    <script id="template--table" type="text/x-handlebars-template">
+      <table summary="This is the text alternative for the canvas graphic.">
+        <caption>{{title}}</caption>
+        <tbody>
+          <tr>
+            {{#each labels}}
+              <th scope="col">{{label}}</th>
+            {{/each}}
+          </tr>
+          <tr>
+            {{#each rows}}
+              <td>{{value}}</td>
+            {{/each}}
+          </tr>
+        </tbody>
+      </table>
+    </script>
     <script src="js/utilities.js" charset="utf-8"></script>
     <script src="js/script.js" charset="utf-8"></script>
   </body>

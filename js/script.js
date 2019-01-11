@@ -4,6 +4,8 @@
   var $ctxSales = $('.chart-sales-man');
   var $ctxMonth = $('.chart-sales-month');
   var $ctxQuarter = $('.chart-sales-quarter');
+  var tmpOptionSelect = $('#template--option').html();
+  var tmpOptionTable = $('#template--table').html();
   var $selectMan = $('#agente');
   var $selectMonth = $('#mese');
   var $selectDay = $('#giorno');
@@ -31,6 +33,11 @@
   var chartLine = false;
   var chartPie = false;
   var chartBar = false;
+  var tables = {
+    chartLine: $('.table-sales-month'),
+    chartPie: $('.table-sales-man'),
+    chartBar: $('.table-sales-quarter')
+  };
 
   $(document).ready(function(){
 
@@ -38,11 +45,11 @@
     getDataApi(urlApi);
 
     //creo la select mesi
-    createOption($selectMonth, MONTH);
+    createOption($selectMonth, tmpOptionSelect, MONTH);
 
     //popolo la select dei giorni
     var days = createArray(31);
-    createOption($selectDay, days);
+    createOption($selectDay, tmpOptionSelect, days);
 
     $selectMonth.change(function(){
       var selectedMonth = $(this).val();
@@ -50,7 +57,7 @@
       var momentString = selectedYear + '-' + selectedMonth;
       var daysInMonth = moment(momentString, 'YYYY-MMMM').daysInMonth();
       var days = createArray(daysInMonth);
-      createOption($selectDay, days);
+      createOption($selectDay, tmpOptionSelect, days);
     });
 
     //al click sul bottone faccio check dati e invio chiamata post
@@ -108,16 +115,16 @@
         //preparo i dati vendite per agente
         var sales = createDataChartSalesPerMan(data, thisColors);
         //creo la select agenti utilizzando le labels create per il grafico
-        createOption($selectMan, sales.data.labels);
+        createOption($selectMan, tmpOptionSelect, sales.data.labels);
 
         //preparo i dati vendite per mese
         var salesPerMonthData = createDataChartSalesPerMonth(data);
         var salesPerQuarter = createDataChartSalesPerQuarter(data);
 
         //creo il grafici e li inserisco nelle variabili globali
-        chartPie = createChart($ctxSales, chartPie, sales);
-        chartLine = createChart($ctxMonth, chartLine, salesPerMonthData);
-        chartBar = createChart($ctxQuarter, chartBar, salesPerQuarter);
+        chartPie = createChart($ctxSales, chartPie, 'chartPie', sales);
+        chartLine = createChart($ctxMonth, chartLine, 'chartLine', salesPerMonthData);
+        chartBar = createChart($ctxQuarter, chartBar, 'chartBar', salesPerQuarter);
 
       },
       error: function(err) {
@@ -212,6 +219,7 @@
           backgroundColor: jsonNew.colors,
           borderColor: '#bc12bc',
           data: jsonNew.dataPerc,
+          label: 'Vendite per Agente',
         }]
       }
     };
@@ -394,15 +402,18 @@
   }
 
   //funzione che crea grafico
-  function createChart(canvasElement, chartObject, obj){
+  function createChart(canvasElement, chartObject, nameChart, obj){
     if(!chartObject){
       //creo il grafico e lo conservo in una variabile globale
       //[chartObject] e' il nome della variabile
       chartObject = new Chart(canvasElement, obj);
+      console.log(tables[nameChart]);
+      createTable(tables[nameChart], tmpOptionTable, obj);
     } else {
       //aggiorno il grafico
       chartObject.config.data = obj.data;
       chartObject.update();
+      createTable(tables[chartObject], tmpOptionTable, obj);
     }
     //ritorno l'oggetto
     return chartObject;

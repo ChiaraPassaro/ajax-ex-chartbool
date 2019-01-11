@@ -13,7 +13,9 @@ body{
   font-size: 18px;
   font-family: 'Exo 2', sans-serif;
 }
+
 .wrapper{
+  min-width: 1024px;
   padding: 20px;
   text-align: center;
 }
@@ -67,4 +69,9 @@ body{
   height: 30px;
   line-height: 30px;
   font-size: 16px;
+}
+
+.table-for-chart table{
+  width: 100%;
+  font-size: 12px;
 }
