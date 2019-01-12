@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
     <title></title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -50,17 +51,17 @@
         {{/each}}
     </script>
     <script id="template--table" type="text/x-handlebars-template">
-      <table summary="This is the text alternative for the canvas graphic.">
-        <caption>{{title}}</caption>
-        <tbody>
-          <tr>
+      <table summary="{{title}}" class="chart__table table">
+        <caption class="table__caption">{{title}}</caption>
+        <tbody class="table__tbody">
+          <tr class="table__tr">
             {{#each labels}}
-              <th scope="col">{{label}}</th>
+              <th scope="col" class="table__th">{{label}}</th>
             {{/each}}
           </tr>
-          <tr>
+          <tr class="table__tr">
             {{#each rows}}
-              <td>{{value}}</td>
+              <td class="table__td">{{value}}</td>
             {{/each}}
           </tr>
         </tbody>
