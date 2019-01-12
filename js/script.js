@@ -29,14 +29,20 @@
     'December'
   ];
 
-  //setto variabile oggetti chart
-  var chartLine = false;
-  var chartPie = false;
-  var chartBar = false;
-  var tables = {
-    chartLine: $('.table-sales-month'),
-    chartPie: $('.table-sales-man'),
-    chartBar: $('.table-sales-quarter')
+  //setto variabile oggetti charts
+  var charts = {
+    chartLine: {
+      chart: undefined,
+      table: $('.table-sales-month')
+    },
+    chartPie:{
+      chart: undefined,
+      table: $('.table-sales-man')
+    },
+    chartBar: {
+      chart: undefined,
+      table: $('.table-sales-quarter')
+    }
   };
 
   $(document).ready(function(){
@@ -51,6 +57,7 @@
     var days = createArray(31);
     createOption($selectDay, tmpOptionSelect, days);
 
+    //se cambio la select creo i nuovi giorni
     $selectMonth.change(function(){
       var selectedMonth = $(this).val();
       var selectedYear = $selectYear.val();
@@ -75,8 +82,9 @@
       //controllo che i dati siano validi
       var isDate = checkIsValid(date, 'isDate');
       var isNumber = checkIsValid($salesAmount, 'isNumber');
+
       //prendo i venditori dall'oggetto chart gia' creato
-      var arraySalesman = chartPie.config.data.labels;
+      var arraySalesman = charts.chartPie.chart.config.data.labels;
       var isSalesMan = checkIsValid($salesMan, 'isInArray', arraySalesman);
 
       if(isDate && isNumber && isSalesMan){
@@ -86,14 +94,22 @@
           'amount': $salesAmount
         };
 
-        //se esiste chartPie
-        if(chartPie){
-          // salvo i colori attuali della pieChart
-          var colors = chartPie.config.data.datasets[0].backgroundColor;
+        //se esiste l'oggetto chart
+        if(charts){
+          //per ognuna delle sue chiavi
+          for (var chart in charts) {
+            //se e' stata popolata
+            if(chart != undefined){
+              //prendo i colori
+              charts[chart].chart.colors = charts[chart].chart.config.data.datasets[0].backgroundColor;
+            }
+          }
+        } else {
+          alert('Si è verificato un errore nella costruzione dei grafici');
         }
 
         //creo la vendita
-        createSale(dataSale, colors);
+        createSale(dataSale);
       }
       else{
         alert('non hai inserito corretamente i dati');
@@ -105,26 +121,32 @@
 
 
   //funzione che chiama api
-  function getDataApi(urlApi, colors) {
-    var thisColors = colors || false;
-
+  function getDataApi(urlApi) {
     $.ajax({
       url: urlApi,
       method: 'GET',
       success: function(data) {
         //preparo i dati vendite per agente
-        var sales = createDataChartSalesPerMan(data, thisColors);
+        if(charts.chartPie.chart != undefined){
+          var salesColors = charts.chartPie.chart.colors;
+        }
+        var sales = createDataChartSalesPerMan(data, salesColors);
         //creo la select agenti utilizzando le labels create per il grafico
         createOption($selectMan, tmpOptionSelect, sales.data.labels);
 
         //preparo i dati vendite per mese
         var salesPerMonthData = createDataChartSalesPerMonth(data);
-        var salesPerQuarter = createDataChartSalesPerQuarter(data);
+
+        //preparo i dati vendite per quarter
+        if(charts.chartBar.chart != undefined){
+          var quarterColors = charts.chartBar.chart.colors;
+        }
+        var salesPerQuarter = createDataChartSalesPerQuarter(data, quarterColors);
 
         //creo il grafici e li inserisco nelle variabili globali
-        chartPie = createChart($ctxSales, chartPie, 'chartPie', sales);
-        chartLine = createChart($ctxMonth, chartLine, 'chartLine', salesPerMonthData);
-        chartBar = createChart($ctxQuarter, chartBar, 'chartBar', salesPerQuarter);
+        charts.chartPie.chart = createChart($ctxSales, charts.chartPie.chart, 'chartPie', sales);
+        charts.chartLine.chart = createChart($ctxMonth, charts.chartLine.chart, 'chartLine', salesPerMonthData);
+        charts.chartBar.chart = createChart($ctxQuarter, charts.chartBar.chart, 'chartBar', salesPerQuarter);
 
       },
       error: function(err) {
@@ -136,7 +158,6 @@
 
   //Funzione che formatta i dati per il grafico venditori
   function createDataChartSalesPerMan (json, colors){
-    //variabile che contiene i colori creati al primo avvio
     var thisColors = colors || [];
 
     var jsonNew = {
@@ -300,8 +321,14 @@
   }
 
   //Funzione che formatta i data per il grafico vendite per quarter
-  function createDataChartSalesPerQuarter (json){
-    var thisColors = ['red', 'coral', 'blue', 'lightblue'];
+  function createDataChartSalesPerQuarter (json, colors){
+    var thisColors = colors || [];
+
+    if(!colors){
+      for (var k = 0; k < array.length; k++) {
+        thisColors.push(createColorRandom());
+      }
+    }
 
     var jsonNew = {
       'labels': [
@@ -407,20 +434,19 @@
       //creo il grafico e lo conservo in una variabile globale
       //[chartObject] e' il nome della variabile
       chartObject = new Chart(canvasElement, obj);
-      createTable(tables[nameChart], tmpOptionTable, obj);
+      createTable(charts[nameChart].table, tmpOptionTable, obj);
     } else {
       //aggiorno il grafico
       chartObject.config.data = obj.data;
       chartObject.update();
-      createTable(tables[nameChart], tmpOptionTable, obj);
+      createTable(charts[nameChart].table, tmpOptionTable, obj);
     }
     //ritorno l'oggetto
     return chartObject;
   }
 
   //Funzione che aggiunge una vendita
-  function createSale(obj, colors){
-    var thisColors = colors || false;
+  function createSale(obj){
 
     $.ajax({
       url: urlApi,
@@ -428,7 +454,7 @@
       data: obj,
       success: function(data){
         //richiamo la funzione che genera i grafici e passo i colori gia' usati
-        getDataApi(urlApi, thisColors);
+        getDataApi(urlApi);
       },
       error: function(err){
         console.log(err);
