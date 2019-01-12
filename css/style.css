@@ -25,6 +25,33 @@ body{
   margin-bottom: 20px;
 }
 
+.inserisci-vendita{
+  width: calc(100% - 10px);
+  margin: 0 auto;
+  padding: 15px;
+  background: #d1d1d1;
+  border: 1px solid grey;
+  border-radius: 5px;
+}
+.inserisci-vendita__title{
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.inserisci-vendita__button{
+  font-size: 16px;
+  padding: 0 5px;
+  line-height: 30px;
+}
+.inserisci-vendita__giorno,
+.inserisci-vendita__agente,
+.inserisci-vendita__mese,
+.inserisci-vendita__anno,
+.inserisci-vendita__valore{
+  height: 30px;
+  line-height: 30px;
+  font-size: 16px;
+}
+
 .chart__mensile,
 .chart__peragente,
 .chart__perquarter{
@@ -51,38 +78,6 @@ body{
 .chart__title{
   text-transform: uppercase;
 }
-
-.inserisci-vendita{
-  width: calc(100% - 10px);
-  margin: 0 auto;
-  padding: 15px;
-  background: #d1d1d1;
-  border: 1px solid grey;
-  border-radius: 5px;
-}
-
-
-.inserisci-vendita__title{
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-
-.inserisci-vendita__button{
-  font-size: 16px;
-  padding: 0 5px;
-  line-height: 30px;
-}
-
-.inserisci-vendita__giorno,
-.inserisci-vendita__agente,
-.inserisci-vendita__mese,
-.inserisci-vendita__anno,
-.inserisci-vendita__valore{
-  height: 30px;
-  line-height: 30px;
-  font-size: 16px;
-}
-
 .table-for-chart{
   margin-top: 20px;
 }
