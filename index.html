@@ -8,41 +8,57 @@
     <script src="https://momentjs.com/downloads/moment-with-locales.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.2/TweenMax.min.js" charset="utf-8"></script>
+
     <link href="https://fonts.googleapis.com/css?family=Exo+2" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
-    <div class="wrapper">
-      <h1 class="page__title">ChartJs</h1>
-      <div class="inserisci-vendita">
-        <h2 class="inserisci-vendita__title">Inserisci una nuova vendita</h2>
-        <select name="agente" id="agente" class="inserisci-vendita__agente">
-        </select>
-        <select name="mese" id="mese" class="inserisci-vendita__mese">
-        </select>
-        <select name="giorno" id="giorno" class="inserisci-vendita__giorno">
-        </select>
-        <select name="anno" id="anno" class="inserisci-vendita__anno">
-          <option value="2017">2017</option>
-        </select>
-        <input type="text" name="valore" id="valore" class="inserisci-vendita__valore" placeholder="Inserisci il fatturato">
-        <button type="button" name="inserisci" id="button-inserisci" class="inserisci-vendita__button">Invia</button>
-      </div>
-      <div class="chart__mensile">
-        <h2 class="chart__title">Fatturato Mensile</h2>
-        <canvas class="chart-sales-month"></canvas>
-        <div class="table-for-chart table-sales-month"></div>
-      </div>
-      <div class="chart__peragente">
-        <h2 class="chart__title">Vendite per Agente</h2>
-        <canvas class="chart-sales-man"></canvas>
-        <div class="table-for-chart table-sales-man"></div>
-      </div>
-      <div class="chart__perquarter">
-        <h2 class="chart__title">Vendite per Quarter</h2>
-        <canvas class="chart-sales-quarter"></canvas>
-        <div class="table-for-chart table-sales-quarter"></div>
+    <div class="container">
+
+      <div class="wrapper">
+        <div class="top">
+
+        </div>
+        <h1 class="page__title">ChartJs</h1>
+
+        <div class="inserisci-vendita">
+          <h2 class="inserisci-vendita__title">Inserisci una nuova vendita</h2>
+          <select name="agente" id="agente" class="inserisci-vendita__agente">
+          </select>
+          <select name="mese" id="mese" class="inserisci-vendita__mese">
+          </select>
+          <select name="giorno" id="giorno" class="inserisci-vendita__giorno">
+          </select>
+          <select name="anno" id="anno" class="inserisci-vendita__anno">
+            <option value="2017">2017</option>
+          </select>
+          <input type="text" name="valore" id="valore" class="inserisci-vendita__valore" placeholder="Inserisci il fatturato">
+          <button type="button" name="inserisci" id="button-inserisci" class="inserisci-vendita__button">Invia</button>
+        </div>
+
+        <div class="clear">
+          <div class="chart__mensile">
+            <h2 class="chart__title">Fatturato Mensile</h2>
+            <canvas class="chart-sales-month"></canvas>
+            <div class="table-for-chart table-sales-month"></div>
+          </div>
+          <div class="chart__peragente">
+            <h2 class="chart__title">Vendite per Agente</h2>
+            <canvas class="chart-sales-man"></canvas>
+            <div class="table-for-chart table-sales-man"></div>
+          </div>
+        </div>
+
+        <div class="clear">
+          <div class="chart__perquarter">
+            <h2 class="chart__title">Vendite per Quarter</h2>
+            <canvas class="chart-sales-quarter"></canvas>
+            <div class="table-for-chart table-sales-quarter"></div>
+          </div>
+        </div>
+
       </div>
     </div>
     <script id="template--option" type="text/x-handlebars-template">
@@ -50,24 +66,24 @@
           <option value="{{value}}">{{value}}</option>
         {{/each}}
     </script>
-    <script id="template--table" type="text/x-handlebars-template">
-      <table summary="{{title}}" class="chart__table table">
-        <caption class="table__caption">{{title}}</caption>
-        <tbody class="table__tbody">
-          <tr class="table__tr">
-            {{#each labels}}
-              <th scope="col" class="table__th">{{label}}</th>
-            {{/each}}
-          </tr>
-          <tr class="table__tr">
-            {{#each rows}}
-              <td class="table__td">{{value}}</td>
-            {{/each}}
-          </tr>
-        </tbody>
-      </table>
-    </script>
-    <script src="js/utilities.js" charset="utf-8"></script>
-    <script src="js/script.js" charset="utf-8"></script>
   </body>
+  <script id="template--table" type="text/x-handlebars-template">
+    <table summary="{{title}}" class="chart__table table">
+      <caption class="table__caption">{{title}}</caption>
+      <tbody class="table__tbody">
+        <tr class="table__tr">
+          {{#each labels}}
+          <th scope="col" class="table__th">{{label}}</th>
+          {{/each}}
+        </tr>
+        <tr class="table__tr">
+          {{#each rows}}
+          <td class="table__td">{{value}}</td>
+          {{/each}}
+        </tr>
+      </tbody>
+    </table>
+  </script>
+  <script src="js/utilities.js" charset="utf-8"></script>
+  <script src="js/script.js" charset="utf-8"></script>
 </html>

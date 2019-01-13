@@ -90,8 +90,12 @@ function isInArray(value, array){
 }
 
 
-//funzione che genera colori casuali
-function createColorRandom(){
+//funzione che genera colori casuali hex
+function createColorRandomHex(){
   var randomColor = Math.floor(Math.random()*16777215).toString(16);
   return '#' + randomColor;
+}
+function createColorRandom(opacity){
+  var randomColor = 'rgb(' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ', ' + opacity +')';
+  return randomColor;
 }

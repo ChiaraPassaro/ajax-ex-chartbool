@@ -11,6 +11,9 @@
   var $selectDay = $('#giorno');
   var $selectYear = $('#anno');
   var $inputAmount = $('#valore');
+  var $wrapperCtxSales = $('.chart__peragente');
+  var $wrapperCtxMonth = $('.chart__mensile');
+  var $wrapperCtxQuarter = $('.chart__perquarter');
 
   var $buttonInsertSale = $('#button-inserisci');
 
@@ -117,6 +120,23 @@
 
     });
 
+    //add animation
+    // $wrapperCtxSales.mouseover(function(){
+    //   $wrapperCtxMonth.hide();
+    //   $wrapperCtxQuarter.hide();
+    //   TweenMax.to(this, 2, {
+    //     zIndex: 3,
+    //     top: '0',
+    //     left: '0',
+    //     width: '100%',
+    //     height: '100%'
+    //   });
+    //
+    // });
+    // $wrapperCtxSales.mouseleave(function(){
+    //
+    // });
+
   });
 
 
@@ -182,16 +202,16 @@
         jsonNew.data[indexOfThisSalesman] = 0;
 
         if (jsonNew.colors[indexOfThisSalesman] == undefined){
-          var newColor = createColorRandom();
-          var isColor = jsonNew.colors.includes(newColor);
-
+          var newColor;
           //se il colore esiste ne genera uno nuovo
           do {
-            var otherColor = createColorRandom();
-            jsonNew.colors[indexOfThisSalesman] = otherColor;
-          } while (isColor);
+            newColor = createColorRandom('0.7');
+          } while (isInArray(newColor, jsonNew.colors));
 
+          jsonNew.colors[indexOfThisSalesman] = newColor;
+          //console.log(jsonNew.colors[indexOfThisSalesman]);
         }
+
       }
 
       //cerco l'index del venditore corrente
@@ -238,7 +258,7 @@
         labels: jsonNew.labels,
         datasets: [{
           backgroundColor: jsonNew.colors,
-          borderColor: '#bc12bc',
+          borderColor: '#fff',
           data: jsonNew.dataPerc,
           label: 'Vendite per Agente',
         }]
@@ -272,6 +292,7 @@
     for (var i = 0; i < json.length; i++) {
       var thisObj = json[i];
       //trasformo il mese da numero a nome
+      //da inserire check dati
       var thisMonth = moment(thisObj.date, 'DD, MM, YYYY').format('MMMM');
       //salvo l'indice del mese
       var indexOfThisMonth = jsonNew.labels.indexOf(thisMonth);
@@ -291,7 +312,7 @@
       options: {
         legend: {
           display: true,
-          position : 'left',
+          position : 'top',
           labels: {
             fontSize: 18
           }
@@ -309,7 +330,7 @@
       data: {
         labels: jsonNew.labels,
         datasets: [{
-          label: 'Fatturato mensile',
+          label: 'Fatturato Mensile',
           borderColor: '#bc12bc',
           data: jsonNew.data,
         }]
@@ -325,11 +346,16 @@
     var thisColors = colors || [];
 
     if(!colors){
-      for (var k = 0; k < array.length; k++) {
-        thisColors.push(createColorRandom());
+      for (var k = 0; k < 4; k++) {
+        var newColor;
+        do{
+          newColor = createColorRandom('0.7');
+        } while (isInArray(newColor,thisColors));
+        thisColors.push(newColor);
       }
     }
 
+    console.log(thisColors);
     var jsonNew = {
       'labels': [
         'Q1',
