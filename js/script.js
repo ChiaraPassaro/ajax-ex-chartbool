@@ -236,21 +236,26 @@
             });
           },
           onComplete: function() {
-            console.log(animations);
+          //console.log(animations);
             closeElement(thisElement, this);
           },
           onReverseComplete: function(){
-            animations.siblings.reverse();
             $(animations.element.target).find('canvas').css('height', animations.element.chartHeight);
             $(animations.element.target).attr('style', ' ').addClass('closed').on('click',function(){
               addClickAnimation(this);
             });
+
+            //sovrascrivo lo style
+            $(siblings).each(function(index){
+              console.log($(this));
+              $(this).attr('style', '');
+            });
+
           }
         });
 
       },
     });
-
 
   }
 
