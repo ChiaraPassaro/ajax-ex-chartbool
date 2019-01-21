@@ -48,6 +48,8 @@
     }
   };
 
+  var animations = [];
+
   $(document).ready(function(){
 
     //prendo i dati da Api e avvio creazione grafico Torta
@@ -121,24 +123,151 @@
     });
 
     //add animation
-    // $wrapperCtxSales.mouseover(function(){
-    //   $wrapperCtxMonth.hide();
-    //   $wrapperCtxQuarter.hide();
-    //   TweenMax.to(this, 2, {
-    //     zIndex: 3,
-    //     top: '0',
-    //     left: '0',
-    //     width: '100%',
-    //     height: '100%'
-    //   });
-    //
-    // });
-    // $wrapperCtxSales.mouseleave(function(){
-    //
-    // });
+    $('.chart__closed').on('click',function(){
+      addClickAnimation(this);
+      }
+    );
 
   });
 
+  //funzione che aggiunge click
+  function addClickAnimation(thisElement){
+      alert('click');
+      $(thisElement).removeClass('chart__closed');
+      $(thisElement).off('click');
+      var $insertSale = $('.inserisci-vendita');
+      animDash(thisElement, $insertSale);
+  }
+
+  //funzione animazione
+  function animDash(thisElement, $insertSale) {
+    $(thisElement).removeClass('closed');
+
+    var topHeight = $('.page__title').outerHeight();
+    var heightWindow = $(window).height();
+
+    //salvo posizione dell'elemento
+    animations.position = $(thisElement).position();
+
+    //salvo posizioni degli elementi vicini
+    var siblings = $(thisElement).siblings('div');
+    animations.siblingsPosition = [];
+    siblings.each(
+      function(){
+        animations.siblingsPosition.push($(this).position());
+    });
+    animations.siblingsMargin = [];
+    siblings.each(
+      function(){
+        animations.siblingsMargin.push($(this).css('margin'));
+    });
+    animations.siblingsPadding = [];
+    siblings.each(
+      function(){
+        animations.siblingsPadding.push($(this).css('padding'));
+    });
+    animations.siblingsWidth = [];
+    siblings.each(
+      function(){
+        animations.siblingsWidth.push($(this).outerWidth());
+    });
+
+    //nascondo i div fratelli
+    animations.siblings = new TweenMax.fromTo(siblings, 0, {
+      position: 'relative',
+      zIndex: 0,
+      top: function(index, target) {
+        return animations.siblingsPosition[index].top
+      },
+      left: function(index, target) {
+        return animations.siblingsPosition[index].left
+      },
+      margin: function(index, target){
+        return animations.siblingsMargin[index];
+      },
+      padding: function(index, target){
+        return animations.siblingsPadding[index];
+      },
+      width: function(index, target){
+        return animations.siblingsWidth[index];
+      }
+    }, {
+      position: 'absolute',
+      zIndex: 0,
+      top: function(index, target) {
+        return animations.siblingsPosition[index].top;
+      },
+      left: function(index, target) {
+        return animations.siblingsPosition[index].left;
+      },
+      margin: function(index, target){
+        return animations.siblingsMargin[index];
+      },
+      padding: function(index, target){
+        return animations.siblingsPadding[index];
+      },
+      width: function(index, target){
+        return animations.siblingsWidth[index];
+      },
+      onComplete: function() {
+        //avvio animazione su elemento click
+        animations.element = new TweenMax.fromTo(thisElement, 1, {
+          zIndex: 0,
+          top: animations.position.top,
+          left: animations.position.left
+        }, {
+          zIndex: 3,
+          top: topHeight,
+          left: 0,
+          width: '100%',
+          height: heightWindow - topHeight,
+          margin: '0',
+          padding: '20px',
+          position: 'fixed',
+          onStart: function (){
+            //conservo grandezza chart
+            animations.element.chartHeight = $(this.target).find('canvas').height();
+
+            //nascondo div inserimento
+            animations.insert = new TweenMax.to($insertSale, 1, {
+              overflow: 'hidden',
+              height: 0,
+              padding: 0
+            });
+          },
+          onComplete: function() {
+            console.log(animations);
+            closeElement(thisElement, this);
+          },
+          onReverseComplete: function(){
+            animations.siblings.reverse();
+            $(animations.element.target).find('canvas').css('height', animations.element.chartHeight);
+            $(animations.element.target).attr('style', ' ').addClass('closed').on('click',function(){
+              addClickAnimation(this);
+            });
+          }
+        });
+
+      },
+    });
+
+
+  }
+
+  //funzione icona chiusura
+  function closeElement(thisElement, thisTween) {
+    var $closeBtn = $(thisElement).find('.chart__close');
+    $closeBtn.addClass('active');
+    $closeBtn.click(function(thisElement) {
+      $closeBtn.removeClass('active');
+      $(thisElement).addClass('closed');
+
+      animations.element.reverse();
+      animations.insert.reverse();
+
+
+    });
+  }
 
   //funzione che chiama api
   function getDataApi(urlApi) {
@@ -241,8 +370,10 @@
           position : 'left',
           labels: {
             fontSize: 18
-          }
+          },
         },
+        responsive: true,
+        maintainAspectRatio: false,
         tooltips: {
           callbacks: {
             label:function(tooltipItem, data){
@@ -317,6 +448,8 @@
             fontSize: 18
           }
         },
+        responsive: true,
+        maintainAspectRatio: false,
         tooltips: {
           callbacks: {
             label:function(tooltipItem, data){
@@ -355,7 +488,7 @@
       }
     }
 
-    console.log(thisColors);
+    //console.log(thisColors);
     var jsonNew = {
       'labels': [
         'Q1',
@@ -423,6 +556,8 @@
             fontSize: 18
           }
         },
+        responsive: true,
+        maintainAspectRatio: false,
         tooltips: {
           callbacks: {
             label:function(tooltipItem, data){
@@ -460,6 +595,8 @@
       //creo il grafico e lo conservo in una variabile globale
       //[chartObject] e' il nome della variabile
       chartObject = new Chart(canvasElement, obj);
+      chartObject.height = 100;
+      //console.log(chartObject.height);
       createTable(charts[nameChart].table, tmpOptionTable, obj);
     } else {
       //aggiorno il grafico

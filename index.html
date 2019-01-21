@@ -16,12 +16,11 @@
   </head>
   <body>
     <div class="container">
+      <div class="top">
+        <h1 class="page__title">ChartJs</h1>
+      </div>
 
       <div class="wrapper">
-        <div class="top">
-
-        </div>
-        <h1 class="page__title">ChartJs</h1>
 
         <div class="inserisci-vendita">
           <h2 class="inserisci-vendita__title">Inserisci una nuova vendita</h2>
@@ -38,26 +37,43 @@
           <button type="button" name="inserisci" id="button-inserisci" class="inserisci-vendita__button">Invia</button>
         </div>
 
-        <div class="clear">
-          <div class="chart__mensile">
-            <h2 class="chart__title">Fatturato Mensile</h2>
-            <canvas class="chart-sales-month"></canvas>
+          <div class="chart__mensile chart__closed">
+            <div class="chart__close">
+              x
+            </div>
+            <div>
+              <h2 class="chart__title">Fatturato Mensile</h2>
+            </div>
+            <div class="chart__canvas">
+              <canvas class="chart-sales-month"></canvas>
+            </div>
             <div class="table-for-chart table-sales-month"></div>
           </div>
-          <div class="chart__peragente">
-            <h2 class="chart__title">Vendite per Agente</h2>
-            <canvas class="chart-sales-man"></canvas>
+          <div class="chart__peragente chart__closed">
+            <div class="chart__close">
+              x
+            </div>
+            <div>
+              <h2 class="chart__title">Vendite per Agente</h2>
+            </div>
+            <div class="chart__canvas">
+              <canvas class="chart-sales-man"></canvas>
+            </div>
             <div class="table-for-chart table-sales-man"></div>
           </div>
-        </div>
 
-        <div class="clear">
-          <div class="chart__perquarter">
-            <h2 class="chart__title">Vendite per Quarter</h2>
-            <canvas class="chart-sales-quarter"></canvas>
+          <div class="chart__perquarter chart__closed">
+            <div class="chart__close">
+              x
+            </div>
+            <div>
+              <h2 class="chart__title">Vendite per Quarter</h2>
+            </div>
+            <div class="chart__canvas">
+              <canvas class="chart-sales-quarter"></canvas>
+            </div>
             <div class="table-for-chart table-sales-quarter"></div>
           </div>
-        </div>
 
       </div>
     </div>
