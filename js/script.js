@@ -132,7 +132,6 @@
 
   //funzione che aggiunge click
   function addClickAnimation(thisElement){
-      alert('click');
       $(thisElement).removeClass('chart__closed');
       $(thisElement).off('click');
       var $insertSale = $('.inserisci-vendita');
@@ -269,8 +268,6 @@
 
       animations.element.reverse();
       animations.insert.reverse();
-
-
     });
   }
 
